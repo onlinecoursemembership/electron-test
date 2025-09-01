@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electron Test</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(to bottom, #bae6fd, #38bdf8);
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.6rem;
+      color: #0369a1;
+      margin-bottom: 10px;
+    }
+    .element-name {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #1e293b;
+    }
+    button {
+      width: 95%;
+      padding: 10px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .generate-btn {
+      background: #0284c7;
+      color: white;
+    }
+    .generate-btn:hover {
+      background: #0369a1;
+    }
+    .submit-btn {
+      background: #16a34a;
+      color: white;
+    }
+    .submit-btn:hover {
+      background: #15803d;
+    }
+    input {
+      width: 90%;
+      padding: 8px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      margin-top: 8px;
+      font-size: 1rem;
+    }
+    .message {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+    .right {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    .wrong {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Electron Test</h1>
+    <p id="elementName" class="element-name">Click below to get an element</p>
+    <button class="generate-btn" onclick="generateElement()">🎲 Generate Element</button>
+
+    <form id="quizForm" onsubmit="checkAnswer(event)" style="display:none;">
+      <input type="number" id="group" placeholder="Group number" required>
+      <input type="number" id="period" placeholder="Period number" required>
+      <input type="text" id="block" placeholder="Block (s, p, d, f)" required>
+      <button type="submit" class="submit-btn">=</button>
+    </form>
+
+    <div id="message" class="message" style="display:none;"></div>
+  </div>
+
+  <script>
+    const elements = [
+  { name: "Hydrogen", group: 1, period: 1, block: "s" },
+  { name: "Helium", group: 18, period: 1, block: "s" },
+  { name: "Lithium", group: 1, period: 2, block: "s" },
+  { name: "Beryllium", group: 2, period: 2, block: "s" },
+  { name: "Boron", group: 13, period: 2, block: "p" },
+  { name: "Carbon", group: 14, period: 2, block: "p" },
+  { name: "Nitrogen", group: 15, period: 2, block: "p" },
+  { name: "Oxygen", group: 16, period: 2, block: "p" },
+  { name: "Fluorine", group: 17, period: 2, block: "p" },
+  { name: "Neon", group: 18, period: 2, block: "p" },
+  { name: "Sodium", group: 1, period: 3, block: "s" },
+  { name: "Magnesium", group: 2, period: 3, block: "s" },
+  { name: "Aluminium", group: 13, period: 3, block: "p" },
+  { name: "Silicon", group: 14, period: 3, block: "p" },
+  { name: "Phosphorus", group: 15, period: 3, block: "p" },
+  { name: "Sulfur", group: 16, period: 3, block: "p" },
+  { name: "Chlorine", group: 17, period: 3, block: "p" },
+  { name: "Argon", group: 18, period: 3, block: "p" },
+  { name: "Potassium", group: 1, period: 4, block: "s" },
+  { name: "Calcium", group: 2, period: 4, block: "s" },
+  { name: "Scandium", group: 3, period: 4, block: "d" },
+  { name: "Titanium", group: 4, period: 4, block: "d" },
+  { name: "Vanadium", group: 5, period: 4, block: "d" },
+  { name: "Chromium", group: 6, period: 4, block: "d" },
+  { name: "Manganese", group: 7, period: 4, block: "d" },
+  { name: "Iron", group: 8, period: 4, block: "d" },
+  { name: "Cobalt", group: 9, period: 4, block: "d" },
+  { name: "Nickel", group: 10, period: 4, block: "d" },
+  { name: "Copper", group: 11, period: 4, block: "d" },
+  { name: "Zinc", group: 12, period: 4, block: "d" },
+  { name: "Gallium", group: 13, period: 4, block: "p" },
+  { name: "Germanium", group: 14, period: 4, block: "p" },
+  { name: "Arsenic", group: 15, period: 4, block: "p" },
+  { name: "Selenium", group: 16, period: 4, block: "p" },
+  { name: "Bromine", group: 17, period: 4, block: "p" },
+  { name: "Krypton", group: 18, period: 4, block: "p" },
+  { name: "Rubidium", group: 1, period: 5, block: "s" },
+  { name: "Strontium", group: 2, period: 5, block: "s" },
+  { name: "Yttrium", group: 3, period: 5, block: "d" },
+  { name: "Zirconium", group: 4, period: 5, block: "d" },
+  { name: "Niobium", group: 5, period: 5, block: "d" },
+  { name: "Molybdenum", group: 6, period: 5, block: "d" },
+  { name: "Technetium", group: 7, period: 5, block: "d" },
+  { name: "Ruthenium", group: 8, period: 5, block: "d" },
+  { name: "Rhodium", group: 9, period: 5, block: "d" },
+  { name: "Palladium", group: 10, period: 5, block: "d" },
+  { name: "Silver", group: 11, period: 5, block: "d" },
+  { name: "Cadmium", group: 12, period: 5, block: "d" },
+  { name: "Indium", group: 13, period: 5, block: "p" },
+  { name: "Tin", group: 14, period: 5, block: "p" },
+  { name: "Antimony", group: 15, period: 5, block: "p" },
+  { name: "Tellurium", group: 16, period: 5, block: "p" },
+  { name: "Iodine", group: 17, period: 5, block: "p" },
+  { name: "Xenon", group: 18, period: 5, block: "p" },
+  { name: "Caesium", group: 1, period: 6, block: "s" },
+  { name: "Barium", group: 2, period: 6, block: "s" },
+  { name: "Lanthanum", group: 3, period: 6, block: "d" },
+  { name: "Lutetium", group: 3, period: 6, block: "d" },
+  { name: "Hafnium", group: 4, period: 6, block: "d" },
+  { name: "Tantalum", group: 5, period: 6, block: "d" },
+  { name: "Tungsten", group: 6, period: 6, block: "d" },
+  { name: "Rhenium", group: 7, period: 6, block: "d" },
+  { name: "Osmium", group: 8, period: 6, block: "d" },
+  { name: "Iridium", group: 9, period: 6, block: "d" },
+  { name: "Platinum", group: 10, period: 6, block: "d" },
+  { name: "Gold", group: 11, period: 6, block: "d" },
+  { name: "Mercury", group: 12, period: 6, block: "d" },
+  { name: "Thallium", group: 13, period: 6, block: "p" },
+  { name: "Lead", group: 14, period: 6, block: "p" },
+  { name: "Bismuth", group: 15, period: 6, block: "p" },
+  { name: "Polonium", group: 16, period: 6, block: "p" },
+  { name: "Astatine", group: 17, period: 6, block: "p" },
+  { name: "Radon", group: 18, period: 6, block: "p" },
+  { name: "Francium", group: 1, period: 7, block: "s" },
+  { name: "Radium", group: 2, period: 7, block: "s" },
+  { name: "Actinium", group: 3, period: 7, block: "d" },
+  { name: "Lawrencium", group: 3, period: 7, block: "d" },
+  { name: "Rutherfordium", group: 4, period: 7, block: "d" },
+  { name: "Dubnium", group: 5, period: 7, block: "d" },
+  { name: "Seaborgium", group: 6, period: 7, block: "d" },
+  { name: "Bohrium", group: 7, period: 7, block: "d" },
+  { name: "Hassium", group: 8, period: 7, block: "d" },
+  { name: "Meitnerium", group: 9, period: 7, block: "d" },
+  { name: "Darmstadtium", group: 10, period: 7, block: "d" },
+  { name: "Roentgenium", group: 11, period: 7, block: "d" },
+  { name: "Copernicium", group: 12, period: 7, block: "d" },
+  { name: "Nihonium", group: 13, period: 7, block: "p" },
+  { name: "Flerovium", group: 14, period: 7, block: "p" },
+  { name: "Moscovium", group: 15, period: 7, block: "p" },
+  { name: "Livermorium", group: 16, period: 7, block: "p" },
+  { name: "Tennessine", group: 17, period: 7, block: "p" },
+  { name: "Oganesson", group: 18, period: 7, block: "p" }
+]; 
+
+
+    let currentElement = null;
+
+    function generateElement() {
+      const random = elements[Math.floor(Math.random() * elements.length)];
+      currentElement = random;
+      document.getElementById("elementName").textContent = random.name;
+      document.getElementById("quizForm").style.display = "block";
+      document.getElementById("message").style.display = "none";
+      document.getElementById("group").value = "";
+      document.getElementById("period").value = "";
+      document.getElementById("block").value = "";
+    }
+
+    function checkAnswer(e) {
+      e.preventDefault();
+      const group = Number(document.getElementById("group").value);
+      const period = Number(document.getElementById("period").value);
+      const block = document.getElementById("block").value.toLowerCase();
+
+      const messageDiv = document.getElementById("message");
+
+      if (
+        currentElement &&
+        group === currentElement.group &&
+        period === currentElement.period &&
+        block === currentElement.block
+      ) {
+        messageDiv.textContent = "✅ You are right!";
+        messageDiv.className = "message right";
+      } else {
+        messageDiv.textContent = "❌ Do it again!";
+        messageDiv.className = "message wrong";
+      }
+      messageDiv.style.display = "block";
+    }
+  </script>
+</body>
+</html>
